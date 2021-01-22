@@ -1,14 +1,21 @@
 import React from 'react';
 import { Component } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import TransactionScreen from './screens/ScanScreen';
+import ScanScreen from './screens/ScanScreen';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 export default class App extends Component {
   render(){
     return(
     	<View>
-    		<ScanScreen />
+    		<AppContainer />
     	</View>
 	)
   }
 }
+
+const TabNavigator = createSwitchNavigator({
+	ScanScreen: {screen: ScanScreen}
+})
+
+const AppContainer = createAppContainer(TabNavigator);
