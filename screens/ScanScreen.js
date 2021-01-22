@@ -1,17 +1,18 @@
 import React from 'react';
 import { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import * as Permissions from 'expo-permissions';
 
 export default class ScanScreen extends Component{
 	constructor(){
 		super();
-		this.state({
+		this.state={
 		hasCameraPermissions: null,
         scanned: false,
         scannedData: '',
         buttonState: 'normal'
-		})
+		}
 	}
 
 	getCameraPermissions = async (id) =>{
@@ -45,16 +46,29 @@ export default class ScanScreen extends Component{
     }
 
 	render(){
-		return(
-			<View>
-				<Image
-                source={require("../assets/220px-Barcode-scanner.jpg")}
-                style={{width:200, height: 200}} />
-				<TouchableOpacity onPress={this.getCameraPermissions} style={styles.scanButton} title="Barcode Scanner">
-					<Text style={styles.buttonText}>Scan QR Code</Text>
-				</TouchableOpacity>
-			</View>
-		)
+		const hasCameraPermissions = this.state.hasCameraPermissions;
+	    const scanned = this.state.scanned;
+	    const buttonState = this.state.buttonState;
+
+		if (buttonState !== "normal" && hasCameraPermissions){
+	        return(
+	          <BarCodeScanner
+	            onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
+	            style={StyleSheet.absoluteFillObject}
+	          />
+	        );
+	    }else if(buttonState === "normal"){
+	    	return(
+	    		<View>
+					<Image
+	                source={require("../assets/220px-Barcode-scanner.jpg")}
+	                style={{width:200, height: 200}} />
+					<TouchableOpacity onPress={()=>{this.getCameraPermissions("BookId")}} style={styles.scanButton} title="Barcode Scanner">
+						<Text style={styles.buttonText}>Scan QR Code</Text>
+					</TouchableOpacity>
+				</View>
+			)
+		}
 	}
 }
 
@@ -66,10 +80,10 @@ const styles = StyleSheet.create({
 	      width: 74,
 	      borderWidth: 1.5,
 	      borderLeftWidth: 0
-	    },
-	    buttonText:{
-	      fontSize: 15,
-	      textAlign: 'center',
-	      marginTop: 10
-	    },
+    },
+    buttonText:{
+      fontSize: 15,
+      textAlign: 'center',
+      marginTop: 10
+    },
 });
